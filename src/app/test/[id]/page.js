@@ -7,6 +7,22 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata(
+  { params }
+) {
+  const supabase = createClient();
+
+  const { data: rikishi } = await supabase.from('rikishi').select().eq('id', params.id);
+
+  return {
+    title: `Sumostats - ${rikishi.shikona}`,
+    openGraph: {
+      images: [`https://sumostats.vercel.app/api/og/${rikishi.id}`],
+    },
+  };
+}
+
+
 export default async function Home({ params }) {
   // get time of page load
   const start = new Date().getTime();
