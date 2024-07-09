@@ -2,19 +2,13 @@ import { createClient } from '../../../lib/supabase/client';
 import Link from 'next/link';
 import { getFriends } from '../../../lib/db';
 
-export async function generateMetadata(
-  { params }
-) {
-  const supabase = createClient();
 
-  const { data: rikishi } = await supabase.from('rikishi').select().eq('id', params.id);
 
-  return {
-    title: `Sumostats - ${rikishi.shikona}`,
-    openGraph: {
-      images: [`https://sumostats.vercel.app/api/og/${rikishi.id}`],
-    },
-  };
+export async function generateStaticParams() {
+  const ids = [1, 2, 3, 4, 5]
+  return ids.map((id) => ({
+    id: id.toString(),
+  }));
 }
 
 
@@ -26,8 +20,7 @@ export default async function Home({ params }) {
   const { data } = await supabase.from('rikishi').select().eq('id', params.id);
 
 
-  const { data:friends } = await supabase.from('rikishi').select().gt('id', params.id).limit(10);
-
+  const friends = await getFriends(params.id);
   // get time of page load
   const end = new Date().getTime();
 
