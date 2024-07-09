@@ -1,5 +1,5 @@
 import { createClient } from '../../../lib/supabase/client';
-
+import Link from 'next/link';
 export async function generateStaticParams() {
   const ids = [1, 2, 3, 4, 5]
   return ids.map((id) => ({
@@ -12,7 +12,10 @@ export default async function Home({ params }) {
   const start = new Date().getTime();
 
   const supabase = createClient();
-  const { data, error } = await supabase.from('rikishi').select().eq('id', params.id);
+  const { data } = await supabase.from('rikishi').select().eq('id', params.id);
+
+
+  const { data: friends } = await supabase.from('rikishi').select().gt('id', params.id).limit(10);
 
   // get time of page load
   const end = new Date().getTime();
@@ -20,12 +23,12 @@ export default async function Home({ params }) {
 
   return (
     <div>
-      The id of this page is {params.id}
+      The id of this page is {params.id} for {data?.shikona}
 
       {
-        data?.map((rikishi) => (
+        friends?.map((rikishi) => (
           <div key={rikishi.id}>
-            {rikishi.shikona}
+            <Link href={`/test/${rikishi.id}`}>{rikishi.shikona}</Link>
           </div>
         ))}
       <p>Current time was {new Date(end).getHours()}:{new Date(end).getMinutes()}:{new Date(end).getSeconds()}:{new Date(end).getMilliseconds()}</p>
