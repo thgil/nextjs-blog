@@ -26,7 +26,7 @@ export default async function Home({ params }) {
   const { data } = await supabase.from('rikishi').select().eq('id', params.id);
 
 
-  const friends = await getFriends(params.id);
+  const friends = await supabase.from('rikishi').select().gt('id', id).limit(10);
 
   // get time of page load
   const end = new Date().getTime();
